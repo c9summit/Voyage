@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/harsahilbasra/Repos/Voyage/software/demo/backend/backend.csproj": {}
+    "/Users/harsahilbasra/Repos/Voyage/backend/backend.csproj": {}
   },
   "projects": {
-    "/Users/harsahilbasra/Repos/Voyage/software/demo/backend/backend.csproj": {
+    "/Users/harsahilbasra/Repos/Voyage/backend/backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/harsahilbasra/Repos/Voyage/software/demo/backend/backend.csproj",
+        "projectUniqueName": "/Users/harsahilbasra/Repos/Voyage/backend/backend.csproj",
         "projectName": "backend",
-        "projectPath": "/Users/harsahilbasra/Repos/Voyage/software/demo/backend/backend.csproj",
+        "projectPath": "/Users/harsahilbasra/Repos/Voyage/backend/backend.csproj",
         "packagesPath": "/Users/harsahilbasra/.nuget/packages/",
-        "outputPath": "/Users/harsahilbasra/Repos/Voyage/software/demo/backend/obj/",
+        "outputPath": "/Users/harsahilbasra/Repos/Voyage/backend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/harsahilbasra/.nuget/NuGet/NuGet.Config"
