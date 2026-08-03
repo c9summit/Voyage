@@ -10,6 +10,25 @@
   justify-content: center;
 }
 
+.landing__actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.landing__button {
+  padding: 0.75rem 2rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  color: white;
+  background: #333; /* placeholder — swap for your theme colors later */
+}
+
+.landing__button:hover {
+  background: #555;
+}
+
 @media (max-width: 1190px) {
   .landing {
     background-position: 22% center ;
