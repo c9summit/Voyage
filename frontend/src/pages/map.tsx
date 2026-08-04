@@ -8,6 +8,7 @@ import {
 } from '@vnedyalk0v/react19-simple-maps'
 import worldData from '../assets/countries-110m.json'
 import './Map.css'
+import type { Longitude, Latitude } from '@vnedyalk0v/react19-simple-maps'
 
 interface GeoFeature {
   rsmKey: string
@@ -49,11 +50,11 @@ function CompassRose({ className }: { className: string }) {
 
 export default function MapPage() {
   const [position, setPosition] = useState({
-    coordinates: [0, 0] as [number, number],
+    coordinates: [0, 0] as [Longitude, Latitude],
     zoom: 1.3,
   })
 
-  function handleMoveEnd(pos: { coordinates: [number, number]; zoom: number }) {
+  function handleMoveEnd(pos: { coordinates: [Longitude, Latitude]; zoom: number }) {
     setPosition(pos)
   }
 
