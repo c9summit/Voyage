@@ -1,21 +1,32 @@
-import { useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, type SubmitEvent } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { login } from '../api'
 import './Auth.css'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
-    // TODO: call the backend login endpoint once auth is built
-    console.log({ email, password })
+    setError('')
+    try {
+      const result = await login(email, password)
+      localStorage.setItem('token', result.token) // simple storage for now
+      navigate('/map')
+    } catch (err) {
+      setError('Invalid email or password.')
+    }
   }
 
   return (
     <div className="auth">
       <form className="auth__card" onSubmit={handleSubmit}>
         <h1 className="auth__title">Login</h1>
+
+        {error && <p className="auth__error">{error}</p>}
 
         <label className="auth__label" htmlFor="email">Email</label>
         <input

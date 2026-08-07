@@ -1,22 +1,33 @@
-import { useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, type SubmitEvent } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { register } from '../api'
 import './Auth.css'
 
 export default function Signup() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
-    // TODO: call the backend register endpoint once auth is built
-    console.log({ name, email, password })
+    setError('')
+    try {
+      const result = await register(email, password, name)
+      localStorage.setItem('token', result.token)
+      navigate('/map')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong.')
+    }
   }
 
   return (
     <div className="auth">
       <form className="auth__card" onSubmit={handleSubmit}>
         <h1 className="auth__title">Sign Up</h1>
+
+        {error && <p className="auth__error">{error}</p>}
 
         <label className="auth__label" htmlFor="name">Name</label>
         <input
