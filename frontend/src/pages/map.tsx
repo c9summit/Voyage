@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   ComposableMap,
   Geographies,
@@ -9,14 +9,18 @@ import {
 import worldData from '../assets/countries-110m.json'
 import './Map.css'
 import type { Longitude, Latitude } from '@vnedyalk0v/react19-simple-maps'
+import { getVisits, createVisit } from '../api'
 
 interface GeoFeature {
   rsmKey: string
-  properties: Record<string, unknown>
+  properties: {name : string; [key: string]: unknown}
 }
 
 const MIN_ZOOM = 1
 const MAX_ZOOM = 8
+
+const FOG_COLOR = '#8a94a6'
+const CHARTED_COLOR = '#c9a24b'
 
 // Warm sepia/parchment tones instead of gray-blue fog
 const AGED_PALETTE = ['#c9a774', '#d4b483', '#bfa06a', '#cfa878']
@@ -53,6 +57,32 @@ export default function MapPage() {
     coordinates: [0, 0] as [Longitude, Latitude],
     zoom: 1.3,
   })
+  const [visitedCountries, setVisitedCountries] = useState<Set<string>>(new Set())
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getVisits()
+      .then((visits) => setVisitedCountries(new Set(visits.map((v) => v.countryName))))
+      .catch((err) => console.error('Failed to load visits', err))
+      .finally(() => setLoading(false))
+  }, [])
+
+  async function handleCountryClick(countryName: string) {
+    if (visitedCountries.has(countryName)) return // already charted, nothing to do
+
+    // Optimistic update — reflect it immediately, roll back on failure
+    setVisitedCountries((prev) => new Set(prev).add(countryName))
+    try {
+      await createVisit(countryName)
+    } catch (err) {
+      console.error('Failed to save visit', err)
+      setVisitedCountries((prev) => {
+        const next = new Set(prev)
+        next.delete(countryName)
+        return next
+      })
+    }
+  }
 
   function handleMoveEnd(pos: { coordinates: [Longitude, Latitude]; zoom: number }) {
     setPosition(pos)
@@ -82,36 +112,42 @@ export default function MapPage() {
             >
               <Geographies geography={worldData}>
                 {({ geographies }: { geographies: GeoFeature[] }) =>
-                  geographies.map((geo) => (
-                    <Geography
-                      key={geo.rsmKey}
-                      geography={geo}
-                      style={{
-                        default: {
-                          fill: shadeFor(geo.rsmKey),
-                          stroke: '#4a3419',
-                          strokeWidth: 0.5,
-                          outline: 'none',
-                          filter: 'url(#handDrawn)',
-                        },
-                        hover: {
-                          fill: '#e0c294',
-                          stroke: '#4a3419',
-                          strokeWidth: 0.5,
-                          outline: 'none',
-                          filter: 'url(#handDrawn)',
-                          cursor: 'pointer',
-                        },
-                        pressed: {
-                          fill: '#a98851',
-                          stroke: '#4a3419',
-                          strokeWidth: 0.5,
-                          outline: 'none',
-                          filter: 'url(#handDrawn)',
-                        },
-                      }}
-                    />
-                  ))
+                  geographies.map((geo) => {
+                    const isCharted = visitedCountries.has(geo.properties.name)
+                    const fill = isCharted ? CHARTED_COLOR : FOG_COLOR
+
+                    return (
+                      <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        onClick={() => handleCountryClick(geo.properties.name)}
+                        style={{
+                          default: {
+                            fill,
+                            stroke: '#4a3419',
+                            strokeWidth: 0.5,
+                            outline: 'none',
+                            filter: 'url(#handDrawn)',
+                          },
+                          hover: {
+                            fill: isCharted ? '#ddb95c' : '#a5afba',
+                            stroke: '#4a3419',
+                            strokeWidth: 0.5,
+                            outline: 'none',
+                            filter: 'url(#handDrawn)',
+                            cursor: 'pointer',
+                          },
+                          pressed: {
+                            fill: isCharted ? '#a98332' : '#6f7a89',
+                            stroke: '#4a3419',
+                            strokeWidth: 0.5,
+                            outline: 'none',
+                            filter: 'url(#handDrawn)',
+                          },
+                        }}
+                      />
+                    )
+                  })
                 }
               </Geographies>
             </ZoomableGroup>
