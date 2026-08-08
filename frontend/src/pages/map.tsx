@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   ComposableMap,
   Geographies,
@@ -9,6 +9,7 @@ import {
 import worldData from '../assets/countries-110m.json'
 import './Map.css'
 import type { Longitude, Latitude } from '@vnedyalk0v/react19-simple-maps'
+import { getContinent, CONTINENT_NAMES } from '../data/continents'
 import { getVisits, createVisit } from '../api'
 
 interface GeoFeature {
@@ -16,10 +17,18 @@ interface GeoFeature {
   properties: {name : string; [key: string]: unknown}
 }
 
+interface HoverInfo {
+  name: string
+  continent: string
+  visited: boolean
+  x: number
+  y: number
+}
+
 const MIN_ZOOM = 1
 const MAX_ZOOM = 8
 
-const FOG_COLOR = '#8a94a6'
+const FOG_COLOR = '#81868f'
 const CHARTED_COLOR = '#c9a24b'
 
 // Warm sepia/parchment tones instead of gray-blue fog
@@ -58,7 +67,10 @@ export default function MapPage() {
     zoom: 1.3,
   })
   const [visitedCountries, setVisitedCountries] = useState<Set<string>>(new Set())
+  const [totalCountries, setTotalCountries] = useState(0)
+  const [allCountryNames, setAllCountryNames] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
+  const [hover, setHover] = useState<HoverInfo | null>(null)
 
   useEffect(() => {
     getVisits()
@@ -68,9 +80,8 @@ export default function MapPage() {
   }, [])
 
   async function handleCountryClick(countryName: string) {
-    if (visitedCountries.has(countryName)) return // already charted, nothing to do
+    if (visitedCountries.has(countryName)) return 
 
-    // Optimistic update — reflect it immediately, roll back on failure
     setVisitedCountries((prev) => new Set(prev).add(countryName))
     try {
       await createVisit(countryName)
@@ -88,10 +99,31 @@ export default function MapPage() {
     setPosition(pos)
   }
 
+    const continentStats = useMemo(() => {
+    const totals: Record<string, number> = {}
+    const visited: Record<string, number> = {}
+    for (const name of CONTINENT_NAMES) {
+      totals[name] = 0
+      visited[name] = 0
+    }
+
+    for (const countryName of allCountryNames) {
+      const continent = getContinent(countryName)
+      if (!(continent in totals)) continue
+      totals[continent] += 1
+      if (visitedCountries.has(countryName)) visited[continent] += 1
+    }
+
+    return CONTINENT_NAMES.map((name) => ({
+      name,
+      visited: visited[name],
+      total: totals[name],
+    }))
+  }, [allCountryNames, visitedCountries])
+
   return (
     <div className="map-page">
-      <h1 className="map-page__title">Charting the Unknown</h1>
-
+      <div className="map-page__layout">
       <div className="map-page__frame">
         <div className="map-page__paper">
           <ComposableMap className="map-page__canvas" projectionConfig={{ scale: 147 }}>
@@ -113,6 +145,14 @@ export default function MapPage() {
               <Geographies geography={worldData}>
                 {({ geographies }: { geographies: GeoFeature[] }) =>
                   geographies.map((geo) => {
+                    if (allCountryNames.length !== geographies.length) {
+                      const names = geographies.map((g) => g.properties.name)
+                      setTimeout(() => {
+                        setTotalCountries(geographies.length)
+                        setAllCountryNames(names)
+                      }, 0)
+                    }
+                    const name = geo.properties.name
                     const isCharted = visitedCountries.has(geo.properties.name)
                     const fill = isCharted ? CHARTED_COLOR : FOG_COLOR
 
@@ -121,6 +161,21 @@ export default function MapPage() {
                         key={geo.rsmKey}
                         geography={geo}
                         onClick={() => handleCountryClick(geo.properties.name)}
+                        onMouseEnter={(evt: React.MouseEvent) =>
+                          setHover({
+                            name,
+                            continent: getContinent(name),
+                            visited: isCharted,
+                            x: evt.clientX,
+                            y: evt.clientY,
+                          })
+                        }
+                        onMouseMove={(evt: React.MouseEvent) =>
+                          setHover((prev) =>
+                            prev ? { ...prev, x: evt.clientX, y: evt.clientY } : prev
+                          )
+                        }
+                        onMouseLeave={() => setHover(null)}
                         style={{
                           default: {
                             fill,
@@ -159,6 +214,36 @@ export default function MapPage() {
           <CompassRose className="map-page__compass map-page__compass--bottom-right" />
         </div>
       </div>
+      <aside className="map-page__sidebar">
+          <h2 className="map-page__sidebar-title">Progress</h2>
+          <p className="map-page__stat">
+            {visitedCountries.size} / {totalCountries || '...'}
+          </p>
+          <p className="map-page__stat-label">lands charted</p>
+          <div className="map-page__continents">
+            {continentStats.map((c) => (
+              <div key={c.name} className="map-page__continent-row">
+                <span className="map-page__continent-name">{c.name}</span>
+                <span className="map-page__continent-count">
+                  {c.visited}/{c.total}
+                </span>
+              </div>
+            ))}
+          </div>
+        </aside>
+        </div>
+        {hover && (
+        <div
+          className="map-page__tooltip"
+          style={{ left: hover.x + 16, top: hover.y + 16 }}
+        >
+          <p className="map-page__tooltip-name">{hover.name}</p>
+          <p className="map-page__tooltip-continent">{hover.continent}</p>
+          <p className={`map-page__tooltip-status ${hover.visited ? 'is-visited' : ''}`}>
+            {hover.visited ? '✓ Charted' : 'Unexplored'}
+          </p>
+        </div>
+      )}
     </div>
   )
 }

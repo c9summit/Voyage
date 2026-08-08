@@ -62,6 +62,22 @@ public class VisitsController : ControllerBase
         return Ok(new VisitResponse(visit.Id, visit.CountryName, visit.VisitedOn, visit.Note));
     }
 
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, UpdateVisitRequest request)
+    {
+        if (request.VisitedOn > DateOnly.FromDateTime(DateTime.UtcNow))
+            return BadRequest("Visit date cannot be in the future.");
+
+    var visit = await _db.Visits.FirstOrDefaultAsync(v => v.Id == id && v.UserId == CurrentUserId);
+    if (visit is null) return NotFound();
+
+    visit.VisitedOn = request.VisitedOn;
+    visit.Note = request.Note;
+
+    await _db.SaveChangesAsync();
+    return Ok(new VisitResponse(visit.Id, visit.CountryName, visit.VisitedOn, visit.Note));
+    }
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {

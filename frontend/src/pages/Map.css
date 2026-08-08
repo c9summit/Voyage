@@ -3,7 +3,7 @@
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, #3a2f22 0%, #1c1712 100%);
+  background: radial-gradient(ellipse at center, #3a2f22 0%, #d4b483 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,7 +21,6 @@
   flex-shrink: 0;
 }
 
-/* Outer dark wooden-frame border */
 .map-page__frame {
   width: 100%;
   max-width: 1600px;
@@ -36,7 +35,6 @@
     0 16px 50px rgba(0, 0, 0, 0.7);
 }
 
-/* Inner parchment sheet with deckled/torn edge look */
 .map-page__paper {
   position: relative;
   width: 100%;
@@ -51,7 +49,6 @@
     inset 0 0 90px rgba(74, 52, 25, 0.35);
 }
 
-/* Paper grain texture */
 .map-page__paper::after {
   content: '';
   position: absolute;
@@ -63,7 +60,6 @@
   z-index: 2;
 }
 
-/* Warm aged-edge vignette (browner corners, like foxing on old paper) */
 .map-page__paper::before {
   content: '';
   position: absolute;
@@ -103,16 +99,6 @@
   right: 1rem;
 }
 
-@media (max-width: 640px) {
-  .map-page__title {
-    font-size: 1.4rem;
-  }
-  .map-page__compass {
-    width: 56px;
-    height: 56px;
-  }
-}
-
 .map-page__border-ticks {
   position: absolute;
   inset: 0;
@@ -121,3 +107,149 @@
   z-index: 4;
   pointer-events: none;
 }
+
+.map-page__canvas path {
+  outline: none !important;
+}
+
+.map-page__canvas path:focus,
+.map-page__canvas path:focus-visible {
+  outline: none !important;
+}
+
+.map-page__layout {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  max-width: 1700px;
+  flex: 1;
+  min-height: 0;
+}
+
+.map-page__sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #5a3d1f, #3a2812);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 2px #8a6a2f,
+    0 16px 50px rgba(0, 0, 0, 0.7);
+  padding: 1.5rem 1.25rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.map-page__sidebar-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: #d4af37;
+  letter-spacing: 0.05em;
+  margin: 0 0 1rem;
+}
+
+.map-page__stat {
+  font-family: 'Cinzel', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #e8d4a4;
+  margin: 0;
+}
+
+.map-page__stat-label {
+  font-family: 'EB Garamond', serif;
+  color: #d4af37;
+  opacity: 0.8;
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+}
+
+.map-page__continents {
+  width: 100%;
+  border-top: 1px solid rgba(212, 175, 55, 0.3);
+  padding-top: 0.75rem;
+}
+
+.map-page__continent-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.35rem 0;
+  font-family: 'EB Garamond', serif;
+  font-size: 0.9rem;
+  color: #e8d4a4;
+}
+
+.map-page__continent-name {
+  opacity: 0.9;
+}
+
+.map-page__continent-count {
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.map-page__tooltip {
+  position: fixed;
+  z-index: 50;
+  background: #2b2015;
+  border: 1px solid #8a6a2f;
+  border-radius: 6px;
+  padding: 0.6rem 0.9rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  min-width: 140px;
+}
+
+.map-page__tooltip-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  color: #e8d4a4;
+  margin: 0 0 0.15rem;
+}
+
+.map-page__tooltip-continent {
+  font-family: 'EB Garamond', serif;
+  font-size: 0.8rem;
+  color: #b3a68c;
+  margin: 0 0 0.35rem;
+}
+
+.map-page__tooltip-status {
+  font-family: 'EB Garamond', serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #8a94a6;
+  margin: 0;
+}
+
+.map-page__tooltip-status.is-visited {
+  color: #c9a24b;
+}
+
+@media (max-width: 640px) {
+  .map-page__title {
+    font-size: 1.4rem;
+  }
+  .map-page__compass {
+    width: 56px;
+    height: 56px;
+  }
+  .map-page__layout {
+    flex-direction: column;
+  }
+  .map-page__sidebar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 0.75rem;
+  }
+  .map-page__sidebar-title {
+    display: none;
+  }
+    .map-page__tooltip {
+    display: none}
+}
+
