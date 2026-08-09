@@ -4,13 +4,12 @@ import {
   Geographies,
   Geography,
   ZoomableGroup,
-  Graticule,
 } from '@vnedyalk0v/react19-simple-maps'
 import worldData from '../assets/countries-110m.json'
 import './Map.css'
 import type { Longitude, Latitude } from '@vnedyalk0v/react19-simple-maps'
 import { getContinent, CONTINENT_NAMES } from '../data/continents'
-import { getVisits, createVisit } from '../api'
+import { createVisit } from '../api'
 import { useMapStore } from '../store/useMapStore'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
@@ -34,17 +33,6 @@ const TOTAL_COUNTRIES = 177
 const FOG_COLOR = '#81868f'
 const CHARTED_COLOR = '#c9a24b'
 
-// Warm sepia/parchment tones instead of gray-blue fog
-const AGED_PALETTE = ['#c9a774', '#d4b483', '#bfa06a', '#cfa878']
-
-
-function shadeFor(id: string) {
-  let hash = 0
-  for (let i = 0; i < id.length; i++) {
-    hash = (hash * 31 + id.charCodeAt(i)) % AGED_PALETTE.length
-  }
-  return AGED_PALETTE[Math.abs(hash)]
-}
 
 function CompassRose({ className }: { className: string }) {
   return (
@@ -72,12 +60,9 @@ export default function MapPage() {
   })
   const visitedCountries = useMapStore((state) => state.visitedCountries)
   const allCountryNames = useMapStore((state) => state.allCountryNames)
-  const setVisitedCountries = useMapStore((state) => state.setVisitedCountries)
   const addVisitedCountry = useMapStore((state) => state.addVisitedCountry)
   const removeVisitedCountry = useMapStore((state) => state.removeVisitedCountry)
   const setAllCountryNames = useMapStore((state) => state.setAllCountryNames)
-  const [totalCountries, setTotalCountries] = useState(0)
-  const [loading, setLoading] = useState(true)
   const [hover, setHover] = useState<HoverInfo | null>(null)
   const navigate = useNavigate()
 const logout = useAuthStore((state) => state.logout)
@@ -86,17 +71,6 @@ function handleLogout() {
   logout()
   navigate('/login')
 }
-
-  useEffect(() => {
-    console.time('getVisits')
-    getVisits()
-      .then((visits) => {
-        console.timeEnd('getVisits')
-      console.log('visits returned:', visits.length)
-      setVisitedCountries(visits.map((v) => v.countryName))})
-      .catch((err) => console.error('Failed to load visits', err))
-      .finally(() => setLoading(false))
-  }, [])
 
   useEffect(() => {
   const names = (worldData as any).objects.countries.geometries.map(

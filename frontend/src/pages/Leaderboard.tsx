@@ -91,7 +91,7 @@ const filteredEntries = useMemo(() => {
               </tr>
             </thead>
             <tbody>
-              {filteredEntries.map((entry, i) => (
+              {filteredEntries.map((entry) => (
                 <tr key={entry.displayName}>
                   <td>{entry.rank}</td>
                   <td>{entry.displayName}</td>
