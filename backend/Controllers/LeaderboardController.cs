@@ -18,17 +18,22 @@ public class LeaderboardController : ControllerBase
         _db = db;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetLeaderboard()
-    {
-        var leaderboard = await _db.Users
-            .Select(u => new LeaderboardEntryResponse(
-                u.DisplayName,
-                _db.Visits.Count(v => v.UserId == u.Id)
-            ))
-            .OrderByDescending(entry => entry.CountriesVisited)
-            .ToListAsync();
+[HttpGet]
+public async Task<IActionResult> GetLeaderboard()
+{
+    var visitCounts = await _db.Users
+        .Select(u => new
+        {
+            u.DisplayName,
+            CountriesVisited = _db.Visits.Count(v => v.UserId == u.Id)
+        })
+        .ToListAsync();
 
-        return Ok(leaderboard);
-    }
+    var leaderboard = visitCounts
+        .OrderByDescending(entry => entry.CountriesVisited)
+        .Select(entry => new LeaderboardEntryResponse(entry.DisplayName, entry.CountriesVisited))
+        .ToList();
+
+    return Ok(leaderboard);
+}
 }

@@ -98,6 +98,13 @@ function handleLogout() {
       .finally(() => setLoading(false))
   }, [])
 
+  useEffect(() => {
+  const names = (worldData as any).objects.countries.geometries.map(
+    (g: any) => g.properties.name
+  )
+  setAllCountryNames(names)
+}, [])
+
   async function handleCountryClick(countryName: string) {
     if (visitedCountries.has(countryName)) return
 

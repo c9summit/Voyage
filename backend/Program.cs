@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using backend.Hubs;
-
+using Microsoft.EntityFrameworkCore.Sqlite;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("DemoDb"));
+    options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddCors(options =>
 {
