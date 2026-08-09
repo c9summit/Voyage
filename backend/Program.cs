@@ -19,10 +19,14 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
         policy
-            .WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials());
+    .WithOrigins(
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://REPLACE-WITH-YOUR-CLOUDFLARE-PAGES-URL.pages.dev"
+    )
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials());
 });
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
@@ -63,7 +67,11 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthentication();

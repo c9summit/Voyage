@@ -1,5 +1,8 @@
-const AUTH_BASE = 'http://127.0.0.1:5000/api/auth'
-const VISITS_BASE = 'http://127.0.0.1:5000/api/visits'
+const API_BASE = import.meta.env.VITE_API_BASE_URL
+
+const AUTH_BASE = `${API_BASE}/api/auth`
+const VISITS_BASE = `${API_BASE}/api/visits`
+const LEADERBOARD_BASE = `${API_BASE}/api/leaderboard`
 import { useAuthStore } from './store/useAuthStore'
 
 interface AuthResponse {
@@ -64,7 +67,6 @@ export async function createVisit(countryName: string): Promise<Visit> {
   return res.json()
 }
 
-const LEADERBOARD_BASE = 'http://127.0.0.1:5000/api/leaderboard'
 
 export interface LeaderboardEntry {
   displayName: string

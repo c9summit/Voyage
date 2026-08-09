@@ -40,7 +40,7 @@ const filteredEntries = useMemo(() => {
     refresh()
 
     const connection = new HubConnectionBuilder()
-      .withUrl('http://127.0.0.1:5000/hubs/leaderboard', {
+      .withUrl(`${import.meta.env.VITE_API_BASE_URL}/hubs/leaderboard`, {
         accessTokenFactory: () => useAuthStore.getState().token ?? '',
       })
       .withAutomaticReconnect()
