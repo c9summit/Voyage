@@ -220,8 +220,7 @@ function handleLogout() {
         </div>
       </div>
       <aside className="map-page__sidebar">
-          <button className="map-page__logout" onClick={handleLogout}>Leave the Realm</button>
-          <Link to="/leaderboard" className="map-page__nav-link">Leaderboard </Link>
+          <button className="porthole-btn porthole-btn--logout" onClick={handleLogout} aria-label="Logout"><span className="porthole-btn__icon">⎋</span></button>
           <h2 className="map-page__sidebar-title">Progress</h2>
           <p className="map-page__stat">
             {visitedCountries.size} / {TOTAL_COUNTRIES}
@@ -237,6 +236,7 @@ function handleLogout() {
               </div>
             ))}
           </div>
+            <Link to="/leaderboard" className="porthole-btn porthole-btn--leaderboard" aria-label="Leaderboard"><span className="porthole-btn__icon">⚑</span></Link>
         </aside>
         </div>
         

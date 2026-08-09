@@ -246,6 +246,65 @@
   background: rgba(212, 175, 55, 0.15);
 }
 
+.map-page__nav-link {
+    font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  background: transparent;
+  color: #d4af37;
+  border: 1px solid #8a6a2f;
+  border-radius: 4px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+}
+
+.map-page__nav-link:hover{
+  background: rgba(212, 175, 55, 0.15);
+}
+
+.porthole-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  background: radial-gradient(circle at 35% 30%, #3a5a6a 0%, #1c2a30 70%);
+  border: 4px solid #8a6a2f;
+  box-shadow:
+    inset 0 0 0 2px #d4af37,
+    inset 0 4px 10px rgba(0, 0, 0, 0.6),
+    0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.porthole-btn:hover {
+  border-color: #d4af37;
+  box-shadow:
+    inset 0 0 0 2px #e8c65a,
+    inset 0 4px 10px rgba(0, 0, 0, 0.6),
+    0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+.porthole-btn__icon {
+  font-size: 1.3rem;
+  color: #e8d4a4;
+  line-height: 1;
+}
+
+.porthole-btn--logout {
+  margin-bottom: 1.25rem;
+  align-self: center;
+}
+
+.porthole-btn--leaderboard {
+  margin-top: auto; /* pushes it to the bottom of the flex column */
+  align-self: center;
+}
+
 @media (max-width: 640px) {
   .map-page__title {
     font-size: 1.4rem;

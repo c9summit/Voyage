@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { HubConnectionBuilder, HubConnectionState, type HubConnection } from '@microsoft/signalr'
 import { getLeaderboard, type LeaderboardEntry } from '../api'
@@ -10,6 +10,20 @@ export default function Leaderboard() {
   const [loading, setLoading] = useState(true)
   const [live, setLive] = useState(false)
   const connectionRef = useRef<HubConnection | null>(null)
+  const [search, setSearch] = useState('')
+
+const rankedEntries = useMemo(
+  () => entries.map((entry, i) => ({ ...entry, rank: i + 1 })),
+  [entries]
+)
+
+const filteredEntries = useMemo(() => {
+  const query = search.trim().toLowerCase()
+  if (!query) return rankedEntries
+  return rankedEntries.filter((entry) =>
+    entry.displayName.toLowerCase().includes(query)
+  )
+}, [rankedEntries, search])
 
   async function refresh() {
     try {
@@ -57,13 +71,14 @@ export default function Leaderboard() {
   return (
     <div className="leaderboard-page">
       <div className="leaderboard-page__card">
+        <Link to="/map" className="leaderboard-page__back">←</Link>
         <div className="leaderboard-page__header">
           <h1 className="leaderboard-page__title">The Fellowship's Ledger</h1>
           <span className={`leaderboard-page__status ${live ? 'is-live' : ''}`}>
             {live ? '● Live' : '○ Connecting...'}
           </span>
         </div>
-
+        <input type="text" className="leaderboard-page__search" placeholder="Search travellers..." value={search} onChange={(e) => setSearch(e.target.value)}/>
         {loading ? (
           <p className="leaderboard-page__loading">Consulting the ledger...</p>
         ) : (
@@ -76,9 +91,9 @@ export default function Leaderboard() {
               </tr>
             </thead>
             <tbody>
-              {entries.map((entry, i) => (
+              {filteredEntries.map((entry, i) => (
                 <tr key={entry.displayName}>
-                  <td>{i + 1}</td>
+                  <td>{entry.rank}</td>
                   <td>{entry.displayName}</td>
                   <td>{entry.countriesVisited}</td>
                 </tr>
@@ -86,10 +101,6 @@ export default function Leaderboard() {
             </tbody>
           </table>
         )}
-
-        <Link to="/map" className="leaderboard-page__back">
-          ← Back to the Map
-        </Link>
       </div>
     </div>
   )
