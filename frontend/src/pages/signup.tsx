@@ -2,6 +2,7 @@ import { useState, type SubmitEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { register } from '../api'
 import './Auth.css'
+import { useAuthStore } from '../store/useAuthStore'
 
 export default function Signup() {
   const [name, setName] = useState('')
@@ -10,20 +11,26 @@ export default function Signup() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError('')
-    try {
-      const result = await register(email, password, name)
-      localStorage.setItem('token', result.token)
-      navigate('/map')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong.')
-    }
+async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+  e.preventDefault()
+  setError('')
+  try {
+    const result = await register(email, password, name)
+    useAuthStore.getState().login({
+      token: result.token,
+      userId: result.userId,
+      email: result.email,
+      displayName: result.displayName,
+    })
+    navigate('/map')
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'Something went wrong.')
   }
+}
 
   return (
     <div className="auth">
+      
       <form className="auth__card" onSubmit={handleSubmit}>
         <h1 className="auth__title">Sign Up</h1>
 

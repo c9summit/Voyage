@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
+import { useAuthStore } from '../store/useAuthStore'
 
 export default function RequireAuth({ children }: { children: ReactNode }) {
-  const token = localStorage.getItem('token')
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
 
-  if (!token) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />
   }
 

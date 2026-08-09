@@ -1,5 +1,6 @@
-const AUTH_BASE = 'http://localhost:5000/api/auth'
-const VISITS_BASE = 'http://localhost:5000/api/visits'
+const AUTH_BASE = 'http://127.0.0.1:5000/api/auth'
+const VISITS_BASE = 'http://127.0.0.1:5000/api/visits'
+import { useAuthStore } from './store/useAuthStore'
 
 interface AuthResponse {
   userId: string
@@ -16,7 +17,7 @@ export interface Visit {
 }
 
 function authHeaders(): HeadersInit {
-  const token = localStorage.getItem('token')
+  const token = useAuthStore.getState().token
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 

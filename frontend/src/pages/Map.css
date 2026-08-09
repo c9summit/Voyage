@@ -229,6 +229,23 @@
   color: #c9a24b;
 }
 
+
+.map-page__logout {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  background: transparent;
+  color: #d4af37;
+  border: 1px solid #8a6a2f;
+  border-radius: 4px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+}
+
+.map-page__logout:hover {
+  background: rgba(212, 175, 55, 0.15);
+}
+
 @media (max-width: 640px) {
   .map-page__title {
     font-size: 1.4rem;

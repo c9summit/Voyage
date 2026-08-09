@@ -2,6 +2,7 @@ import { useState, type SubmitEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '../api'
 import './Auth.css'
+import { useAuthStore } from '../store/useAuthStore'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -10,16 +11,21 @@ export default function Login() {
   const navigate = useNavigate()
 
   async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError('')
-    try {
-      const result = await login(email, password)
-      localStorage.setItem('token', result.token) // simple storage for now
-      navigate('/map')
-    } catch (err) {
-      setError('Invalid email or password.')
-    }
+  e.preventDefault()
+  setError('')
+  try {
+    const result = await login(email, password)
+    useAuthStore.getState().login({
+      token: result.token,
+      userId: result.userId,
+      email: result.email,
+      displayName: result.displayName,
+    })
+    navigate('/map')
+  } catch (err) {
+    setError('Invalid email or password.')
   }
+}
 
   return (
     <div className="auth">

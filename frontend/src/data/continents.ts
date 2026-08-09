@@ -61,12 +61,17 @@ for (const [continent, countries] of Object.entries(CONTINENT_GROUPS)) {
   }
 }
 
+const warnedCountries = new Set<string>()
+
 export function getContinent(countryName: string): string {
   const continent = COUNTRY_TO_CONTINENT[countryName]
   if (!continent) {
-    console.warn(
-      `[continents] No continent mapping for "${countryName}" — add it to src/data/continents.ts`
-    )
+    if (!warnedCountries.has(countryName)) {
+      warnedCountries.add(countryName)
+      console.warn(
+        `[continents] No continent mapping for "${countryName}" — add it to src/data/continents.ts`
+      )
+    }
     return 'Unknown'
   }
   return continent

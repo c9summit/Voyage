@@ -11,6 +11,9 @@ import './Map.css'
 import type { Longitude, Latitude } from '@vnedyalk0v/react19-simple-maps'
 import { getContinent, CONTINENT_NAMES } from '../data/continents'
 import { getVisits, createVisit } from '../api'
+import { useMapStore } from '../store/useMapStore'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../store/useAuthStore'
 
 interface GeoFeature {
   rsmKey: string
@@ -33,6 +36,7 @@ const CHARTED_COLOR = '#c9a24b'
 
 // Warm sepia/parchment tones instead of gray-blue fog
 const AGED_PALETTE = ['#c9a774', '#d4b483', '#bfa06a', '#cfa878']
+
 
 function shadeFor(id: string) {
   let hash = 0
@@ -66,32 +70,43 @@ export default function MapPage() {
     coordinates: [0, 0] as [Longitude, Latitude],
     zoom: 1.3,
   })
-  const [visitedCountries, setVisitedCountries] = useState<Set<string>>(new Set())
+  const visitedCountries = useMapStore((state) => state.visitedCountries)
+  const allCountryNames = useMapStore((state) => state.allCountryNames)
+  const setVisitedCountries = useMapStore((state) => state.setVisitedCountries)
+  const addVisitedCountry = useMapStore((state) => state.addVisitedCountry)
+  const removeVisitedCountry = useMapStore((state) => state.removeVisitedCountry)
+  const setAllCountryNames = useMapStore((state) => state.setAllCountryNames)
   const [totalCountries, setTotalCountries] = useState(0)
-  const [allCountryNames, setAllCountryNames] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [hover, setHover] = useState<HoverInfo | null>(null)
+  const navigate = useNavigate()
+const logout = useAuthStore((state) => state.logout)
+
+function handleLogout() {
+  logout()
+  navigate('/login')
+}
 
   useEffect(() => {
+    console.time('getVisits')
     getVisits()
-      .then((visits) => setVisitedCountries(new Set(visits.map((v) => v.countryName))))
+      .then((visits) => {
+        console.timeEnd('getVisits')
+      console.log('visits returned:', visits.length)
+      setVisitedCountries(visits.map((v) => v.countryName))})
       .catch((err) => console.error('Failed to load visits', err))
       .finally(() => setLoading(false))
   }, [])
 
   async function handleCountryClick(countryName: string) {
-    if (visitedCountries.has(countryName)) return 
+    if (visitedCountries.has(countryName)) return
 
-    setVisitedCountries((prev) => new Set(prev).add(countryName))
+    addVisitedCountry(countryName)
     try {
       await createVisit(countryName)
     } catch (err) {
       console.error('Failed to save visit', err)
-      setVisitedCountries((prev) => {
-        const next = new Set(prev)
-        next.delete(countryName)
-        return next
-      })
+      removeVisitedCountry(countryName)
     }
   }
 
@@ -158,7 +173,7 @@ export default function MapPage() {
 
                     return (
                       <Geography
-                        key={geo.rsmKey}
+                        key={`${geo.rsmKey}-${isCharted}`}
                         geography={geo}
                         onClick={() => handleCountryClick(geo.properties.name)}
                         onMouseEnter={(evt: React.MouseEvent) =>
@@ -170,11 +185,8 @@ export default function MapPage() {
                             y: evt.clientY,
                           })
                         }
-                        onMouseMove={(evt: React.MouseEvent) =>
-                          setHover((prev) =>
-                            prev ? { ...prev, x: evt.clientX, y: evt.clientY } : prev
-                          )
-                        }
+                        
+
                         onMouseLeave={() => setHover(null)}
                         style={{
                           default: {
@@ -215,6 +227,7 @@ export default function MapPage() {
         </div>
       </div>
       <aside className="map-page__sidebar">
+          <button className="map-page__logout" onClick={handleLogout}>Leave the Realm</button>
           <h2 className="map-page__sidebar-title">Progress</h2>
           <p className="map-page__stat">
             {visitedCountries.size} / {totalCountries || '...'}
@@ -232,6 +245,7 @@ export default function MapPage() {
           </div>
         </aside>
         </div>
+        
         {hover && (
         <div
           className="map-page__tooltip"
