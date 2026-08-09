@@ -25,7 +25,7 @@ builder.Services.AddCors(options =>
     .WithOrigins(
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-        "https://REPLACE-WITH-YOUR-CLOUDFLARE-PAGES-URL.pages.dev"
+        "https://voyage.pages.dev"
     )
     .AllowAnyHeader()
     .AllowAnyMethod()
