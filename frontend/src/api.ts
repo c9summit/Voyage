@@ -63,3 +63,16 @@ export async function createVisit(countryName: string): Promise<Visit> {
   if (!res.ok) throw new Error(await res.text())
   return res.json()
 }
+
+const LEADERBOARD_BASE = 'http://127.0.0.1:5000/api/leaderboard'
+
+export interface LeaderboardEntry {
+  displayName: string
+  countriesVisited: number
+}
+
+export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
+  const res = await fetch(LEADERBOARD_BASE, { headers: authHeaders() })
+  if (!res.ok) throw new Error(await res.text())
+  return res.json()
+}

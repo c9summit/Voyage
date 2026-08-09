@@ -6,6 +6,8 @@ using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using backend.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace backend.Controllers;
 
@@ -15,10 +17,12 @@ namespace backend.Controllers;
 public class VisitsController : ControllerBase
 {
     private readonly AppDbContext _db;
+    private readonly IHubContext<LeaderboardHub> _hub;
 
-    public VisitsController(AppDbContext db)
+    public VisitsController(AppDbContext db, IHubContext<LeaderboardHub> hub)
     {
         _db = db;
+        _hub = hub;
     }
 
     private Guid CurrentUserId =>
@@ -58,6 +62,7 @@ public class VisitsController : ControllerBase
 
         _db.Visits.Add(visit);
         await _db.SaveChangesAsync();
+        await _hub.Clients.All.SendAsync("LeaderboardUpdated");
 
         return Ok(new VisitResponse(visit.Id, visit.CountryName, visit.VisitedOn, visit.Note));
     }

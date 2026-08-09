@@ -1,0 +1,101 @@
+.leaderboard-page {
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: radial-gradient(ellipse at center, #3a2f22 0%, #1c1712 100%);
+}
+
+.leaderboard-page__card {
+  width: 100%;
+  max-width: 560px;
+  padding: 2rem;
+  box-sizing: border-box;
+  background: radial-gradient(ellipse at 30% 20%, #e8d4a4 0%, #d4b483 55%, #b8935a 100%);
+  border: 2px solid #4a3419;
+  border-radius: 6px 14px 6px 14px;
+  box-shadow:
+    0 0 0 2px #8a6a2f,
+    0 16px 50px rgba(0, 0, 0, 0.7);
+}
+
+.leaderboard-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.leaderboard-page__title {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #3a2a14;
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.leaderboard-page__status {
+  font-family: 'EB Garamond', serif;
+  font-size: 0.8rem;
+  color: #8a94a6;
+}
+
+.leaderboard-page__status.is-live {
+  color: #3d5a3d;
+  font-weight: 600;
+}
+
+.leaderboard-page__loading {
+  font-family: 'EB Garamond', serif;
+  color: #4a3419;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.leaderboard-page__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'EB Garamond', serif;
+  color: #2a2318;
+}
+
+.leaderboard-page__table th {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-align: left;
+  color: #4a3419;
+  border-bottom: 2px solid #8a6a2f;
+  padding: 0.5rem 0.4rem;
+}
+
+.leaderboard-page__table td {
+  padding: 0.6rem 0.4rem;
+  border-bottom: 1px solid rgba(74, 52, 25, 0.2);
+}
+
+.leaderboard-page__back {
+  display: inline-block;
+  margin-top: 1.5rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: #4a3419;
+  text-decoration: none;
+}
+
+.leaderboard-page__back:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .leaderboard-page__card {
+    padding: 1.25rem;
+  }
+  .leaderboard-page__title {
+    font-size: 1.1rem;
+  }
+}

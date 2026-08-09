@@ -12,7 +12,7 @@ import type { Longitude, Latitude } from '@vnedyalk0v/react19-simple-maps'
 import { getContinent, CONTINENT_NAMES } from '../data/continents'
 import { getVisits, createVisit } from '../api'
 import { useMapStore } from '../store/useMapStore'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
 
 interface GeoFeature {
@@ -30,7 +30,7 @@ interface HoverInfo {
 
 const MIN_ZOOM = 1
 const MAX_ZOOM = 8
-
+const TOTAL_COUNTRIES = 177
 const FOG_COLOR = '#81868f'
 const CHARTED_COLOR = '#c9a24b'
 
@@ -160,13 +160,6 @@ function handleLogout() {
               <Geographies geography={worldData}>
                 {({ geographies }: { geographies: GeoFeature[] }) =>
                   geographies.map((geo) => {
-                    if (allCountryNames.length !== geographies.length) {
-                      const names = geographies.map((g) => g.properties.name)
-                      setTimeout(() => {
-                        setTotalCountries(geographies.length)
-                        setAllCountryNames(names)
-                      }, 0)
-                    }
                     const name = geo.properties.name
                     const isCharted = visitedCountries.has(geo.properties.name)
                     const fill = isCharted ? CHARTED_COLOR : FOG_COLOR
@@ -228,9 +221,10 @@ function handleLogout() {
       </div>
       <aside className="map-page__sidebar">
           <button className="map-page__logout" onClick={handleLogout}>Leave the Realm</button>
+          <Link to="/leaderboard" className="map-page__nav-link">Leaderboard </Link>
           <h2 className="map-page__sidebar-title">Progress</h2>
           <p className="map-page__stat">
-            {visitedCountries.size} / {totalCountries || '...'}
+            {visitedCountries.size} / {TOTAL_COUNTRIES}
           </p>
           <p className="map-page__stat-label">lands charted</p>
           <div className="map-page__continents">
