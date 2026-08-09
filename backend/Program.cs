@@ -25,7 +25,7 @@ builder.Services.AddCors(options =>
     .WithOrigins(
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-        "https://voyage.pages.dev"
+        "https://voyage1-git-main-c9summits-projects.vercel.app"
     )
     .AllowAnyHeader()
     .AllowAnyMethod()
