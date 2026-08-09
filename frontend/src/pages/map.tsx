@@ -221,11 +221,12 @@ function handleLogout() {
       </div>
       <aside className="map-page__sidebar">
           <button className="porthole-btn porthole-btn--logout" onClick={handleLogout} aria-label="Logout"><span className="porthole-btn__icon">⎋</span></button>
+          <div className="map-page__progress-group">
           <h2 className="map-page__sidebar-title">Progress</h2>
           <p className="map-page__stat">
             {visitedCountries.size} / {TOTAL_COUNTRIES}
           </p>
-          <p className="map-page__stat-label">lands charted</p>
+          </div>
           <div className="map-page__continents">
             {continentStats.map((c) => (
               <div key={c.name} className="map-page__continent-row">
